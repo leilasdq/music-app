@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/bnm_music_text"
+        android:icon="@drawable/ic_music"
+        android:id="@+id/bnm_music"/>
+
+    <item android:title="@string/bnm_album_text"
+        android:icon="@drawable/ic_album"
+        android:id="@+id/bnm_album"/>
+
+    <item android:title="@string/bnm_singer_text"
+        android:icon="@drawable/ic_singer"
+        android:id="@+id/bnm_singer"/>
+
+</menu>
