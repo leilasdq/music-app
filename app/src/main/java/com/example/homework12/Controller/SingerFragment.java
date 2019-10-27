@@ -1,4 +1,4 @@
-package com.example.homework12;
+package com.example.homework12.Controller;
 
 
 import android.os.Bundle;
@@ -9,22 +9,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.homework12.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AlbumFragment extends Fragment {
+public class SingerFragment extends Fragment {
 
 
-    public AlbumFragment() {
+    public SingerFragment() {
         // Required empty public constructor
     }
 
-    public static AlbumFragment newInstance() {
+    public static SingerFragment newInstance() {
         
         Bundle args = new Bundle();
         
-        AlbumFragment fragment = new AlbumFragment();
+        SingerFragment fragment = new SingerFragment();
         fragment.setArguments(args);
         return fragment;
     }
