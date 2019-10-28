@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.homework12.Adapter.MusicAdapter;
 import com.example.homework12.Model.Music;
 import com.example.homework12.MusicPrepare.LoadMusics;
 import com.example.homework12.R;
@@ -28,6 +29,7 @@ public class MusicFragment extends Fragment {
     private ImageView bannerImage;
     private RecyclerView mRecyclerView;
     private List<Music> mMusicList;
+    private MusicAdapter mAdapter;
 
     public static MusicFragment newInstance() {
         
@@ -48,6 +50,8 @@ public class MusicFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mMusicList = LoadMusics.getSortedMusic(getActivity());
+        mAdapter = new MusicAdapter();
+        mAdapter.setMusicList(getActivity(), mMusicList);
     }
 
     @Override
@@ -60,6 +64,7 @@ public class MusicFragment extends Fragment {
 
         mRecyclerView = view.findViewById(R.id.recycle);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        mRecyclerView.setAdapter(mAdapter);
 
 
         return view;

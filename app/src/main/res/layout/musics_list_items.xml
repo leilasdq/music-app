@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,23 +9,28 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@android:color/tab_indicator_text">
+        android:background="#636161"
+        android:layout_margin="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <ImageView
+                android:id="@+id/music_img"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_gravity="center_vertical"
+                android:layout_margin="8dp"
+                app:srcCompat="@android:drawable/presence_audio_busy"
                 tools:src="@drawable/music_banner" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="5"
                 android:orientation="vertical"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
@@ -46,6 +52,14 @@
                     android:textColor="@android:color/darker_gray" />
 
             </LinearLayout>
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_play_arrow_black_24dp" />
 
         </LinearLayout>
 
