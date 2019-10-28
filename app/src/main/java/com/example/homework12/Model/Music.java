@@ -5,6 +5,7 @@ public class Music {
     private String title;
     private String album;
     private String singer;
+    private String picPath;
 
     public Music(String title, String album, String singer) {
         this.title = title;
@@ -42,5 +43,13 @@ public class Music {
 
     public void setSinger(String singer) {
         this.singer = singer;
+    }
+
+    public String getPicPath() {
+        return picPath;
+    }
+
+    public void setPicPath(String picPath) {
+        this.picPath = picPath;
     }
 }
