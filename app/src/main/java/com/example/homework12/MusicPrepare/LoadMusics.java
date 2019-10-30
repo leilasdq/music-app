@@ -34,8 +34,9 @@ public class LoadMusics {
     }
 
     private static void getExternalMusicList() {
+        sMusicList = new ArrayList<>();
         Long id;
-        String title, album, artist, albumId, picPath = null;
+        String title, album, artist, albumId, picPath;
 
         ContentResolver musicResolver = mContext.getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -59,11 +60,10 @@ public class LoadMusics {
                         new String[] {String.valueOf(albumId)},
                         null);
 
-                try {
-                    cursor.moveToFirst();
+                if (cursor.moveToFirst()) {
                     picPath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-                }finally {
-                    cursor.close();
+                } else {
+                    picPath = null;
                 }
 
                 Music music = new Music(id);

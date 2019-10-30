@@ -1,5 +1,6 @@
 package com.example.homework12.Controller;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.example.homework12.Model.Music;
 import com.example.homework12.MusicPrepare.LoadMusics;
 import com.example.homework12.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,8 +31,10 @@ import java.util.List;
 public class MusicFragment extends Fragment {
     private ImageView bannerImage;
     private RecyclerView mRecyclerView;
-    private List<Music> mMusicList;
+    private List<Music> mMusicList = new ArrayList<>();
     private MusicAdapter mAdapter;
+    private getBottomSheet mBottomSheet;
+    private getBottomSheet size;
 
     public static MusicFragment newInstance() {
         
@@ -47,12 +51,28 @@ public class MusicFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof  getBottomSheet){
+            mBottomSheet = (getBottomSheet) context;
+            size = (getBottomSheet) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mBottomSheet = null;
+        size = null;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMusicList = LoadMusics.getSortedMusic(getActivity());
-        mAdapter = new MusicAdapter();
-        mAdapter.setMusicList(mMusicList);
+        mMusicList.clear();
+        setupAdapter();
     }
 
     @Override
@@ -71,9 +91,19 @@ public class MusicFragment extends Fragment {
         return view;
     }
 
+
+
     private void setBanner(View view) {
         bannerImage = view.findViewById(R.id.banner);
         bannerImage.setImageResource(R.drawable.music_banner);
+    }
+
+    private void setupAdapter(){
+        if (mAdapter == null){
+            mMusicList = LoadMusics.getSortedMusic(getActivity());
+            mAdapter = new MusicAdapter();
+            mAdapter.setMusicList(mMusicList);
+        } else mAdapter.notifyDataSetChanged();
     }
 
     public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHolder> {
@@ -113,6 +143,14 @@ public class MusicFragment extends Fragment {
                 musicImage = itemView.findViewById(R.id.music_img);
                 musicName = itemView.findViewById(R.id.music_name);
                 musicSinger = itemView.findViewById(R.id.singer_name);
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mBottomSheet.onItemSelected(mMusic);
+                        mRecyclerView.setPadding(8, 8, 8, size.bottomMarginSize());
+                    }
+                });
             }
 
             public void bindMusic(Music music){
@@ -124,10 +162,15 @@ public class MusicFragment extends Fragment {
                     Bitmap bitmap = BitmapFactory.decodeFile(mMusic.getPicPath());
                     musicImage.setImageBitmap(bitmap);
                 } else {
-                    musicImage.setImageDrawable(null);
+                    musicImage.setImageResource(R.drawable.no_cover);
                 }
             }
         }
+    }
+
+    public interface getBottomSheet{
+        void onItemSelected(Music music);
+        int bottomMarginSize();
     }
 
 }

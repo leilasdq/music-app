@@ -1,6 +1,8 @@
 package com.example.homework12.Model;
 
-public class Music {
+import java.io.Serializable;
+
+public class Music implements Serializable {
     private Long id;
     private String title;
     private String album;

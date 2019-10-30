@@ -3,4 +3,7 @@
     <string name="bnm_music_text">music</string>
     <string name="bnm_album_text">album</string>
     <string name="bnm_singer_text">singer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
