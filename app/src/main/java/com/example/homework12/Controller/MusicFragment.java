@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.homework12.Model.Music;
 import com.example.homework12.MusicPrepare.LoadMusics;
+import com.example.homework12.MusicPrepare.MusicManager;
 import com.example.homework12.R;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class MusicFragment extends Fragment {
     private MusicAdapter mAdapter;
     private getBottomSheet mBottomSheet;
     private getBottomSheet size;
+
+    private MusicManager mMusicManager;
 
     public static MusicFragment newInstance() {
         
@@ -70,6 +73,7 @@ public class MusicFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
 
         mMusicList.clear();
         setupAdapter();
@@ -90,8 +94,6 @@ public class MusicFragment extends Fragment {
 
         return view;
     }
-
-
 
     private void setBanner(View view) {
         bannerImage = view.findViewById(R.id.banner);
@@ -147,7 +149,7 @@ public class MusicFragment extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mBottomSheet.onItemSelected(mMusic);
+                        mBottomSheet.onItemSelected(mMusic, mMusicList);
                         mRecyclerView.setPadding(8, 8, 8, size.bottomMarginSize());
                     }
                 });
@@ -168,8 +170,13 @@ public class MusicFragment extends Fragment {
         }
     }
 
+    public void onPlaySelected(Music music, Context context){
+        mMusicManager = MusicManager.getInstance(context, mMusicList);
+        mMusicManager.play(music.getId());
+    }
+
     public interface getBottomSheet{
-        void onItemSelected(Music music);
+        void onItemSelected(Music music, List<Music> musicList);
         int bottomMarginSize();
     }
 
