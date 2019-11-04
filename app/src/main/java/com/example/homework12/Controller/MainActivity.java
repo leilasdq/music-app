@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.homework12.Model.Music;
+import com.example.homework12.MusicPrepare.LoadMusics;
 import com.example.homework12.MusicPrepare.MusicManager;
 import com.example.homework12.R;
 import com.example.homework12.Utils.PictureUtils;
@@ -48,9 +49,10 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
     private MusicManager mMusicManager;
     private double startTime = 0;
     private double finalTime = 0;
-    private boolean isPlaying = false;
+    int currentPosition;
 
     private MusicFragment mMusicFragment;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,30 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
                 setPlayButtons();
             }
         });
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMusicManager.next();
+                currentPosition = mMusicManager.getPosition();
+                initBottomSheetViews(mMusicList.get(currentPosition));
+            }
+        });
+        pervious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMusicManager.previous();
+                currentPosition = mMusicManager.getPosition();
+                initBottomSheetViews(mMusicList.get(currentPosition));
+            }
+        });
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mMusicManager.next();
+                currentPosition = mMusicManager.getPosition();
+                initBottomSheetViews(mMusicList.get(currentPosition));
+            }
+        });
     }
 
     private void expandBottomSheet() {
@@ -172,6 +198,9 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
     }
 
     private void initViews() {
+        mMusicList = LoadMusics.getSortedMusic(this);
+        mMusicManager = MusicManager.getInstance(this, mMusicList);
+        mediaPlayer = mMusicManager.getMediaPlayer();
         sheetContainer = findViewById(R.id.bottom_sheet);
         mToolbar = findViewById(R.id.toolbar);
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -200,6 +229,18 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
     public void onItemSelected(Music music, List<Music> musicList) {
         mMusicList = musicList;
         mMusic = music;
+        if (getMusicPosition(music) != null){
+            currentPosition = getMusicPosition(music);
+        }
+
+        bottomSheetBehavior.setPeekHeight(2 * bottomSize.getHeight());
+        expandSeek.setProgress((int)startTime);
+        initBottomSheetViews(music);
+    }
+
+    private void initBottomSheetViews(Music music) {
+        mMusicFragment.onPlaySelected(music, this, currentPosition);
+        setPlayButtons();
 
         musicTitle.setText(music.getTitle());
         musicSinger.setText(music.getSinger());
@@ -213,16 +254,6 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
             cover.setImageResource(R.drawable.no_cover);
             image.setImageResource(R.drawable.no_cover);
         }
-
-        bottomSheetBehavior.setPeekHeight(2 * bottomSize.getHeight());
-        expandSeek.setProgress((int)startTime);
-        initBottomSheetViews(music);
-    }
-
-    private void initBottomSheetViews(Music music) {
-        mMusicFragment.onPlaySelected(music, this);
-        mMusicManager = MusicManager.getInstance(this, mMusicList);
-        setPlayButtons();
 
         startTime = mMusicManager.getStartTime();
         finalTime = mMusicManager.getFinalTime();
@@ -267,9 +298,17 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
         }
     }
 
+    private Integer getMusicPosition(Music music){
+        for (int i = 0; i < mMusicList.size() ; i++) {
+            if (mMusicList.get(i) == music){
+                return i;
+            }
+        }
+        return null;
+    }
+
     private Runnable UpdateSongTime = new Runnable() {
         public void run() {
-            MediaPlayer mediaPlayer = mMusicManager.getMediaPlayer();
             int currentPosition = mediaPlayer.getCurrentPosition();
             start.setText(String.format("%d:%2d",
                     TimeUnit.MILLISECONDS.toMinutes((long) currentPosition),

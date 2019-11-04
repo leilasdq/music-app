@@ -18,12 +18,14 @@ public class MusicManager {
 
     private MediaPlayer mMediaPlayer;
     private Context mContext;
-    private List<Music> mMusicList;
+    private static List<Music> mMusicList;
 
     private double startTime = 0;
     private double finalTime = 0;
+    private int position;
 
     private boolean isPlayed = false;
+    private Uri musicUri;
 
     public static MusicManager getInstance(Context context, List<Music> musics) {
         if (ourInstance == null){
@@ -55,9 +57,14 @@ public class MusicManager {
         return mMediaPlayer;
     }
 
-    public void play(Long musicId)  {
+    public int getPosition() {
+        return position;
+    }
+
+    public void play(Long musicId, int listPosition)  {
         isPlayed = true;
-        Uri musicUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicId);
+        position = listPosition;
+        musicUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicId);
 
         if (mMediaPlayer.isPlaying()){
             mMediaPlayer.stop();
@@ -85,6 +92,16 @@ public class MusicManager {
             mMediaPlayer.start();
             isPlayed = true;
         }
+    }
+
+    public void next(){
+        position = (position+1)%(mMusicList.size());
+        this.play(mMusicList.get(position).getId(), position);
+    }
+
+    public void previous(){
+        position = (position - 1 + mMusicList.size()) % mMusicList.size();
+        this.play(mMusicList.get(position).getId(), position);
     }
 
     public void seekToPosition(int progress){

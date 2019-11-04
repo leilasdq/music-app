@@ -170,9 +170,9 @@ public class MusicFragment extends Fragment {
         }
     }
 
-    public void onPlaySelected(Music music, Context context){
+    public void onPlaySelected(Music music, Context context, int currentPosition){
         mMusicManager = MusicManager.getInstance(context, mMusicList);
-        mMusicManager.play(music.getId());
+        mMusicManager.play(music.getId(), currentPosition);
     }
 
     public interface getBottomSheet{
