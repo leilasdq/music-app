@@ -37,16 +37,18 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
 
     private TextView musicTitle, musicSinger, start, end;
     private ImageView cover, image;
-    private ImageButton topPlayButton;
+    private ImageButton topPlayButton, play_pause, next, pervious, shuffle, repeat;
     private SeekBar collapsedSeek, expandSeek;
 
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
 
     private Handler myHandler = new Handler();
     private List<Music> mMusicList;
+    private Music mMusic;
     private MusicManager mMusicManager;
     private double startTime = 0;
     private double finalTime = 0;
+    private boolean isPlaying = false;
 
     private MusicFragment mMusicFragment;
 
@@ -102,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
                 expandBottomSheet();
             }
         });
-
         expandSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
@@ -119,6 +120,13 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+        play_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMusicManager.pause();
+                setPlayButtons();
             }
         });
     }
@@ -179,6 +187,11 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
         expandSeek.setClickable(false);
         start = findViewById(R.id.start_time);
         end = findViewById(R.id.final_time);
+        play_pause = findViewById(R.id.play);
+        next = findViewById(R.id.next);
+        pervious = findViewById(R.id.previous);
+        shuffle = findViewById(R.id.shuffle);
+        repeat = findViewById(R.id.replay);
 
         mMusicFragment = MusicFragment.newInstance();
     }
@@ -186,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
     @Override
     public void onItemSelected(Music music, List<Music> musicList) {
         mMusicList = musicList;
+        mMusic = music;
 
         musicTitle.setText(music.getTitle());
         musicSinger.setText(music.getSinger());
@@ -208,6 +222,8 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
     private void initBottomSheetViews(Music music) {
         mMusicFragment.onPlaySelected(music, this);
         mMusicManager = MusicManager.getInstance(this, mMusicList);
+        setPlayButtons();
+
         startTime = mMusicManager.getStartTime();
         finalTime = mMusicManager.getFinalTime();
         end.setText(String.format("%d:%2d",
@@ -224,6 +240,16 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
         expandSeek.setMax((int) finalTime);
         expandSeek.setProgress((int)startTime);
         myHandler.postDelayed(UpdateSongTime,100);
+    }
+
+    private void setPlayButtons() {
+        if (mMusicManager.isPlayed()){
+            topPlayButton.setImageResource(R.drawable.ic_action_black_pause);
+            play_pause.setBackgroundResource(R.drawable.ic_pause);
+        } else {
+            topPlayButton.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+            play_pause.setBackgroundResource(R.drawable.ic_play_button);
+        }
     }
 
     @Override
@@ -250,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements MusicFragment.get
                     TimeUnit.MILLISECONDS.toSeconds((long) currentPosition) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) currentPosition)))
             );
+            setPlayButtons();
             myHandler.postDelayed(this, 100);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 expandSeek.setProgress(currentPosition, true);
